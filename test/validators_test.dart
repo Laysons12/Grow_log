@@ -45,11 +45,11 @@ void main() {
     });
 
     test('validateSkillsOrSubjects validations', () {
-      expect(AppValidators.validateSkillsOrSubjects([]), isNull);
+      expect(AppValidators.validateSkillsOrSubjects([]), 'Please select at least one topic');
       expect(AppValidators.validateSkillsOrSubjects(List.generate(7, (i) => 'Topic $i')), 'You can select at most 6 topics');
       expect(AppValidators.validateSkillsOrSubjects(['Math', '']), 'Topic cannot be empty');
       expect(AppValidators.validateSkillsOrSubjects(['Math', 'a' * 21]), 'Topic can have at most 20 letters');
-      expect(AppValidators.validateSkillsOrSubjects(['Math', 'Math123456']), 'Topic can have at most 5 numbers');
+      expect(AppValidators.validateSkillsOrSubjects(['Math', 'Math123456']), 'Topic can have at most 3 numbers');
       expect(AppValidators.validateSkillsOrSubjects(['Math', 'Physics', 'math']), 'Duplicate topics are not allowed');
       expect(AppValidators.validateSkillsOrSubjects(['Math', 'Physics']), isNull);
     });
