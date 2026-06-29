@@ -9,10 +9,9 @@ class MainLayout extends StatelessWidget {
   const MainLayout({Key? key, required this.child, required this.state}) : super(key: key);
 
   int _getSelectedIndex(String path) {
-    if (path.startsWith('/check-in')) return 1;
+    if (path.startsWith('/journal')) return 1;
     if (path.startsWith('/goals')) return 2;
-    if (path.startsWith('/progress')) return 3;
-    if (path.startsWith('/journal')) return 4;
+    if (path.startsWith('/settings')) return 3;
     return 0; // default to Home
   }
 
@@ -22,16 +21,13 @@ class MainLayout extends StatelessWidget {
         context.go('/home');
         break;
       case 1:
-        context.go('/check-in');
+        context.go('/journal');
         break;
       case 2:
         context.go('/goals');
         break;
       case 3:
-        context.go('/progress');
-        break;
-      case 4:
-        context.go('/journal');
+        context.go('/settings');
         break;
     }
   }
@@ -50,11 +46,10 @@ class MainLayout extends StatelessWidget {
         unselectedItemColor: AppTheme.textSecondary,
         type: BottomNavigationBarType.fixed,
         items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
-          BottomNavigationBarItem(icon: Icon(Icons.edit), label: 'Check-in'),
-          BottomNavigationBarItem(icon: Icon(Icons.gps_fixed), label: 'Goals'),
-          BottomNavigationBarItem(icon: Icon(Icons.trending_up), label: 'Progress'),
-          BottomNavigationBarItem(icon: Icon(Icons.menu_book), label: 'Journal'),
+          BottomNavigationBarItem(icon: Icon(Icons.dashboard_outlined), label: 'Dashboard'),
+          BottomNavigationBarItem(icon: Icon(Icons.assignment_outlined), label: 'Logs'),
+          BottomNavigationBarItem(icon: Icon(Icons.track_changes), label: 'Goals'),
+          BottomNavigationBarItem(icon: Icon(Icons.person_outline), label: 'Profile'),
         ],
       ),
     );

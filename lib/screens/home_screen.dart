@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:fl_chart/fl_chart.dart';
 import '../utils/theme.dart';
 import '../utils/helpers.dart';
 import '../services/hive_service.dart';
@@ -41,19 +43,47 @@ class _HomeScreenState extends State<HomeScreen> {
     _loadData();
     return Scaffold(
       appBar: AppBar(
-        title: const Text('GrowLog'),
+        title: Text(
+          'GrowLog',
+          style: GoogleFonts.inter(
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
+        ),
         automaticallyImplyLeading: false,
         elevation: 0,
         actions: [
           IconButton(
-            icon: const Icon(Icons.calendar_month),
-            tooltip: 'Monthly Summary',
-            onPressed: () => context.pushNamed('monthlySummary'),
+            icon: const Icon(Icons.notifications_none, color: Colors.white, size: 26),
+            onPressed: () {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('No new notifications'),
+                  duration: Duration(seconds: 1),
+                ),
+              );
+            },
           ),
-          IconButton(
-            icon: const Icon(Icons.settings),
-            onPressed: () => context.pushNamed('settings'),
+          const SizedBox(width: 8),
+          GestureDetector(
+            onTap: () => context.pushNamed('settings'),
+            child: CircleAvatar(
+              backgroundColor: const Color(0xFF2E3047),
+              radius: 16,
+              child: Text(
+                userProfile?.name.isNotEmpty == true 
+                    ? userProfile!.name.substring(0, 1).toUpperCase() 
+                    : 'U',
+                style: const TextStyle(
+                  color: Colors.white70,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 14,
+                ),
+              ),
+            ),
           ),
+          const SizedBox(width: 16),
         ],
       ),
       body: RefreshIndicator(
@@ -61,7 +91,7 @@ class _HomeScreenState extends State<HomeScreen> {
           _refresh();
         },
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(AppTheme.spacingLg),
+          padding: const EdgeInsets.symmetric(horizontal: AppTheme.spacingLg, vertical: AppTheme.spacingSm),
           child: userProfile == null
               ? Center(
                   child: Text(
@@ -72,24 +102,44 @@ class _HomeScreenState extends State<HomeScreen> {
               : Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Greeting card
-                    _buildGreetingCard(),
+                    // Greeting & Streak row
+                    Row(
+                      children: [
+                        Expanded(
+                          flex: 3,
+                          child: _buildGreetingCard(),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          flex: 2,
+                          child: _buildStreakCard(),
+                        ),
+                      ],
+                    ),
                     const SizedBox(height: AppTheme.spacingLg),
 
-                    // Streak card
-                    _buildStreakCard(),
+                    // Progress card
+                    _buildProgressCard(),
                     const SizedBox(height: AppTheme.spacingLg),
 
-                    // Quick check-in button
-                    _buildCheckInButton(),
+                    // Weekly Chart card
+                    _buildWeeklyChartCard(),
                     const SizedBox(height: AppTheme.spacingLg),
 
-                    // Today's goal section
-                    _buildTodayGoalSection(),
+                    // Recent Sessions & Quick Goals side-by-side row
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          child: _buildRecentSessions(),
+                        ),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: _buildQuickGoals(),
+                        ),
+                      ],
+                    ),
                     const SizedBox(height: AppTheme.spacingLg),
-
-                    // Recent entries
-                    _buildRecentEntriesSection(),
                   ],
                 ),
         ),
@@ -99,30 +149,33 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _buildGreetingCard() {
     return Container(
-      padding: const EdgeInsets.all(AppTheme.spacingLg),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [AppTheme.accentBlue, AppTheme.accentBlue.withOpacity(0.6)],
-        ),
+        color: AppTheme.cardBg,
+        border: Border.all(color: AppTheme.borderColor),
         borderRadius: BorderRadius.circular(AppTheme.radiusLg),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            '${AppHelpers.getGreeting()}, ${userProfile?.name}! 👋',
-            style: Theme.of(
-              context,
-            ).textTheme.titleLarge?.copyWith(color: Colors.white),
+            '${AppHelpers.getGreeting()},',
+            style: GoogleFonts.inter(
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
+              color: Colors.white70,
+            ),
           ),
-          const SizedBox(height: AppTheme.spacingSm),
+          const SizedBox(height: 2),
           Text(
-            'Ready to grow today?',
-            style: Theme.of(
-              context,
-            ).textTheme.bodyMedium?.copyWith(color: Colors.white70),
+            '${userProfile?.name}! 👋',
+            style: GoogleFonts.inter(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
+            overflow: TextOverflow.ellipsis,
+            maxLines: 1,
           ),
         ],
       ),
@@ -131,43 +184,42 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _buildStreakCard() {
     final streak = currentStreak?.currentStreak ?? 0;
-    final longestStreak = currentStreak?.longestStreak ?? 0;
-
     return Container(
-      padding: const EdgeInsets.all(AppTheme.spacingLg),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
       decoration: BoxDecoration(
         color: AppTheme.cardBg,
         border: Border.all(color: AppTheme.borderColor),
         borderRadius: BorderRadius.circular(AppTheme.radiusLg),
       ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          _buildStreakItem('🔥 Current', '$streak', 'days'),
-          Container(width: 1, height: 60, color: AppTheme.borderColor),
-          _buildStreakItem('👑 Longest', '$longestStreak', 'days'),
+          Text(
+            'Daily Streak',
+            style: GoogleFonts.inter(
+              fontSize: 11,
+              color: Colors.white38,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(
+            '🔥 $streak days',
+            style: GoogleFonts.inter(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
+            ),
+            overflow: TextOverflow.ellipsis,
+            maxLines: 1,
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildStreakItem(String label, String value, String unit) {
-    return Column(
-      children: [
-        Text(label, style: Theme.of(context).textTheme.bodySmall),
-        const SizedBox(height: AppTheme.spacingSm),
-        Text(
-          value,
-          style: Theme.of(
-            context,
-          ).textTheme.headlineMedium?.copyWith(color: AppTheme.successGreen),
-        ),
-        Text(unit, style: Theme.of(context).textTheme.bodySmall),
-      ],
-    );
-  }
-
-  Widget _buildCheckInButton() {
+  Widget _buildProgressCard() {
     final checkedInSubjects = HiveService.getTodayCheckedInSubjects();
     final totalSubjects = userProfile?.skillsOrSubjects.length ?? 0;
     final checkedInCount = checkedInSubjects
@@ -175,53 +227,107 @@ class _HomeScreenState extends State<HomeScreen> {
             .map((sub) => sub.trim().toLowerCase())
             .contains(s))
         .length;
-    final allDone = totalSubjects > 0 && checkedInCount >= totalSubjects;
+    
+    final double percent = totalSubjects > 0 ? (checkedInCount / totalSubjects) : 0.0;
+    final int percentInt = (percent * 100).round();
 
-    return GestureDetector(
-      onTap: () => context.goNamed('checkIn'),
+    return InkWell(
+      onTap: () => context.pushNamed('checkIn'),
+      borderRadius: BorderRadius.circular(AppTheme.radiusLg),
       child: Container(
-        padding: const EdgeInsets.all(AppTheme.spacingLg),
+        padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
-          color: allDone
-              ? AppTheme.successGreen.withOpacity(0.1)
-              : AppTheme.accentBlue,
-          border: Border.all(
-            color: allDone ? AppTheme.successGreen : AppTheme.accentBlue,
-          ),
+          color: AppTheme.cardBg,
+          border: Border.all(color: AppTheme.borderColor),
           borderRadius: BorderRadius.circular(AppTheme.radiusLg),
         ),
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+            Stack(
+              alignment: Alignment.center,
               children: [
-                Text(
-                  allDone
-                      ? 'All subjects done! ✅'
-                      : checkedInCount > 0
-                          ? 'Continue checking in'
-                          : 'Check in for today',
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    color: allDone ? AppTheme.textPrimary : Colors.white,
+                Container(
+                  width: 86,
+                  height: 86,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    boxShadow: [
+                      BoxShadow(
+                        color: const Color(0xFF7B61FF).withOpacity(0.15),
+                        blurRadius: 12,
+                        spreadRadius: 1,
+                      ),
+                    ],
                   ),
                 ),
-                const SizedBox(height: AppTheme.spacingSm),
-                Text(
-                  allDone
-                      ? 'Tap to update any entry'
-                      : '$checkedInCount/$totalSubjects subjects checked in today',
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: allDone
-                        ? AppTheme.textSecondary
-                        : Colors.white70,
+                SizedBox(
+                  width: 76,
+                  height: 76,
+                  child: CircularProgressIndicator(
+                    value: percent == 0.0 ? 0.01 : percent,
+                    strokeWidth: 8,
+                    backgroundColor: const Color(0xFF28293F),
+                    valueColor: const AlwaysStoppedAnimation<Color>(Color(0xFF7B61FF)),
+                    strokeCap: StrokeCap.round,
                   ),
+                ),
+                Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      'Check-ins',
+                      style: GoogleFonts.inter(
+                        fontSize: 9,
+                        color: Colors.white38,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    Text(
+                      '$percentInt%',
+                      style: GoogleFonts.inter(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
-            Icon(
-              Icons.arrow_forward,
-              color: allDone ? AppTheme.successGreen : Colors.white,
+            const SizedBox(width: 20),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Progress',
+                    style: GoogleFonts.inter(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    percentInt >= 100 
+                        ? 'All completed! Tap to edit.'
+                        : 'Keep it up, ${userProfile?.name}!',
+                    style: GoogleFonts.inter(
+                      fontSize: 13,
+                      color: Colors.white60,
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  Text(
+                    '$checkedInCount of $totalSubjects topics checked in today',
+                    style: GoogleFonts.inter(
+                      fontSize: 11,
+                      color: const Color(0xFF9F8FFF),
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ],
         ),
@@ -229,163 +335,356 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildTodayGoalSection() {
-    final todayGoals = HiveService.getActiveGoals()
-        .where(
-          (g) =>
-              g.dueDate.isBefore(DateTime.now().add(const Duration(days: 1))),
-        )
-        .toList();
+  Widget _buildWeeklyChartCard() {
+    final now = DateTime.now();
+    final chartValues = <double>[];
+    final chartLabels = <String>[];
 
-    if (todayGoals.isEmpty) {
-      return Container(
-        padding: const EdgeInsets.all(AppTheme.spacingLg),
-        decoration: BoxDecoration(
-          color: AppTheme.cardBg,
-          border: Border.all(color: AppTheme.borderColor),
-          borderRadius: BorderRadius.circular(AppTheme.radiusLg),
-        ),
-        child: Center(
-          child: Text(
-            'No goals for today. Add one! 🎯',
-            style: Theme.of(context).textTheme.bodyMedium,
-          ),
-        ),
-      );
+    for (int i = 6; i >= 0; i--) {
+      final date = now.subtract(Duration(days: i));
+      final dayEntries = HiveService.getEntriesByDate(date);
+
+      double value = 0;
+      for (var entry in dayEntries) {
+        if (userProfile?.mode == 'student') {
+          value += entry.hoursOrEnergy;
+        } else {
+          value += 1;
+        }
+      }
+
+      chartValues.add(value);
+      const weekdays = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
+      chartLabels.add(weekdays[date.weekday - 1]);
     }
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text('Today\'s Goals', style: Theme.of(context).textTheme.titleMedium),
-        const SizedBox(height: AppTheme.spacingMd),
-        ...todayGoals.take(2).map((goal) {
-          return Container(
-            margin: const EdgeInsets.only(bottom: AppTheme.spacingMd),
-            padding: const EdgeInsets.all(AppTheme.spacingMd),
-            decoration: BoxDecoration(
-              color: AppTheme.cardBg,
-              border: Border.all(color: AppTheme.borderColor),
-              borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+    final double maxY = chartValues.isNotEmpty ? chartValues.reduce((a, b) => a > b ? a : b) : 0;
+    final double gridMaxY = maxY > 0 ? (maxY * 1.2).ceilToDouble() : 6.0;
+
+    return Container(
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: AppTheme.cardBg,
+        border: Border.all(color: AppTheme.borderColor),
+        borderRadius: BorderRadius.circular(AppTheme.radiusLg),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            userProfile?.mode == 'student'
+                ? 'Study Time This Week (Hours)'
+                : 'Activity This Week (Logs)',
+            style: GoogleFonts.inter(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: Colors.white,
             ),
-            child: Row(
-              children: [
-                Container(
-                  width: 40,
-                  height: 40,
-                  decoration: BoxDecoration(
-                    color: AppTheme.accentBlue.withOpacity(0.2),
-                    shape: BoxShape.circle,
+          ),
+          const SizedBox(height: 24),
+          SizedBox(
+            height: 180,
+            child: BarChart(
+              BarChartData(
+                maxY: gridMaxY,
+                alignment: BarChartAlignment.spaceAround,
+                barTouchData: BarTouchData(
+                  enabled: true,
+                  touchTooltipData: BarTouchTooltipData(
+                    getTooltipColor: (_) => const Color(0xFF1E1F30),
+                    tooltipPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    tooltipMargin: 8,
+                    getTooltipItem: (group, groupIndex, rod, rodIndex) {
+                      return BarTooltipItem(
+                        '${rod.toY.toStringAsFixed(1)}h',
+                        const TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 11,
+                        ),
+                      );
+                    },
                   ),
-                  child: Center(child: Text(goal.isCompleted ? '✅' : '⭕')),
                 ),
-                const SizedBox(width: AppTheme.spacingMd),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        goal.text,
-                        style: Theme.of(context).textTheme.titleSmall,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      Text(
-                        goal.linkedTo,
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: AppTheme.textSecondary,
+                titlesData: FlTitlesData(
+                  show: true,
+                  topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                  rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                  leftTitles: AxisTitles(
+                    sideTitles: SideTitles(
+                      showTitles: true,
+                      reservedSize: 28,
+                      interval: 1.0,
+                      getTitlesWidget: (value, meta) {
+                        if (value % 2 != 0) return const SizedBox();
+                        return Padding(
+                          padding: const EdgeInsets.only(right: 8.0),
+                          child: Text(
+                            '${value.toInt()}h',
+                            style: GoogleFonts.inter(
+                              fontSize: 10,
+                              color: Colors.white38,
+                            ),
+                            textAlign: TextAlign.right,
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                  bottomTitles: AxisTitles(
+                    sideTitles: SideTitles(
+                      showTitles: true,
+                      getTitlesWidget: (value, meta) {
+                        final index = value.toInt();
+                        if (index < 0 || index >= chartLabels.length) {
+                          return const SizedBox();
+                        }
+                        return Padding(
+                          padding: const EdgeInsets.only(top: 8.0),
+                          child: Text(
+                            chartLabels[index],
+                            style: GoogleFonts.inter(
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.white54,
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ),
+                borderData: FlBorderData(show: false),
+                gridData: FlGridData(
+                  show: true,
+                  drawVerticalLine: false,
+                  getDrawingHorizontalLine: (value) {
+                    return const FlLine(
+                      color: Color(0xFF28293F),
+                      strokeWidth: 1,
+                    );
+                  },
+                ),
+                barGroups: chartValues.asMap().entries.map((e) {
+                  final index = e.key;
+                  final val = e.value;
+                  Color rodColor = const Color(0xFF7B61FF);
+                  if (index == 3) rodColor = const Color(0xFFFF9F43);
+                  if (index == 4) rodColor = const Color(0xFF3B82F6);
+
+                  return BarChartGroupData(
+                    x: index,
+                    barRods: [
+                      BarChartRodData(
+                        toY: val,
+                        color: rodColor,
+                        width: 14,
+                        borderRadius: const BorderRadius.vertical(top: Radius.circular(5)),
+                        backDrawRodData: BackgroundBarChartRodData(
+                          show: true,
+                          toY: gridMaxY,
+                          color: const Color(0xFF28293F).withOpacity(0.2),
                         ),
                       ),
                     ],
-                  ),
-                ),
-              ],
+                  );
+                }).toList(),
+              ),
             ),
-          );
-        }).toList(),
-      ],
+          ),
+        ],
+      ),
     );
   }
 
-  Widget _buildRecentEntriesSection() {
-    if (recentEntries.isEmpty) {
-      return Container(
-        padding: const EdgeInsets.all(AppTheme.spacingLg),
-        decoration: BoxDecoration(
-          color: AppTheme.cardBg,
-          border: Border.all(color: AppTheme.borderColor),
-          borderRadius: BorderRadius.circular(AppTheme.radiusLg),
-        ),
-        child: Center(
-          child: Text(
-            'No entries yet. Start by checking in! ✍️',
-            style: Theme.of(context).textTheme.bodyMedium,
-          ),
-        ),
-      );
-    }
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              'Recent Entries',
-              style: Theme.of(context).textTheme.titleMedium,
-            ),
-            GestureDetector(
-              onTap: () => context.goNamed('journal'),
-              child: Text(
-                'View all →',
-                style: Theme.of(
-                  context,
-                ).textTheme.bodySmall?.copyWith(color: AppTheme.accentBlue),
+  Widget _buildRecentSessions() {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: AppTheme.cardBg,
+        border: Border.all(color: AppTheme.borderColor),
+        borderRadius: BorderRadius.circular(AppTheme.radiusLg),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Recent Sessions',
+                style: GoogleFonts.inter(
+                  fontSize: 13,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
               ),
-            ),
-          ],
-        ),
-        const SizedBox(height: AppTheme.spacingMd),
-        ...recentEntries.map((entry) {
-          return Container(
-            margin: const EdgeInsets.only(bottom: AppTheme.spacingMd),
-            padding: const EdgeInsets.all(AppTheme.spacingMd),
-            decoration: BoxDecoration(
-              color: AppTheme.cardBg,
-              border: Border.all(color: AppTheme.borderColor),
-              borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              GestureDetector(
+                onTap: () => context.goNamed('journal'),
+                child: const Icon(Icons.arrow_forward_ios, size: 10, color: Colors.white54),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          if (recentEntries.isEmpty)
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 16.0),
+              child: Center(
+                child: Text(
+                  'No logs yet',
+                  style: GoogleFonts.inter(fontSize: 11, color: Colors.white38),
+                ),
+              ),
+            )
+          else
+            ...recentEntries.take(2).map((entry) {
+              final hours = entry.hoursOrEnergy.toInt();
+              final mins = ((entry.hoursOrEnergy - hours) * 60).round();
+              final durationStr = hours > 0 
+                  ? '${hours}h ${mins}m' 
+                  : '${mins}m';
+
+              return Padding(
+                padding: const EdgeInsets.only(bottom: 12.0),
+                child: Row(
                   children: [
-                    Text(
-                      AppHelpers.getRelativeDate(entry.date),
-                      style: Theme.of(context).textTheme.titleSmall,
+                    Container(
+                      padding: const EdgeInsets.all(6),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFF7B61FF).withOpacity(0.15),
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      child: const Icon(
+                        Icons.menu_book_outlined, 
+                        size: 14, 
+                        color: Color(0xFF7B61FF)
+                      ),
                     ),
-                    Text(
-                      entry.subjectOrSkill,
-                      style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                        color: AppTheme.accentBlue,
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            entry.subjectOrSkill,
+                            style: GoogleFonts.inter(
+                              fontSize: 11,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.white,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          Text(
+                            durationStr,
+                            style: GoogleFonts.inter(
+                              fontSize: 9,
+                              color: Colors.white38,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ],
                 ),
-                const SizedBox(height: AppTheme.spacingSm),
-                Text(
-                  entry.learned,
-                  style: Theme.of(context).textTheme.bodySmall,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
+              );
+            }).toList(),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildQuickGoals() {
+    final activeGoals = HiveService.getActiveGoals();
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: AppTheme.cardBg,
+        border: Border.all(color: AppTheme.borderColor),
+        borderRadius: BorderRadius.circular(AppTheme.radiusLg),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Quick Goals',
+                style: GoogleFonts.inter(
+                  fontSize: 13,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
                 ),
-              ],
-            ),
-          );
-        }).toList(),
-      ],
+              ),
+              GestureDetector(
+                onTap: () => context.goNamed('goals'),
+                child: const Icon(Icons.arrow_forward_ios, size: 10, color: Colors.white54),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          if (activeGoals.isEmpty)
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 16.0),
+              child: Center(
+                child: Text(
+                  'No goals set',
+                  style: GoogleFonts.inter(fontSize: 11, color: Colors.white38),
+                ),
+              ),
+            )
+          else
+            ...activeGoals.take(2).map((goal) {
+              return Padding(
+                padding: const EdgeInsets.only(bottom: 8.0),
+                child: Row(
+                  children: [
+                    SizedBox(
+                      height: 18,
+                      width: 18,
+                      child: Checkbox(
+                        value: goal.isCompleted,
+                        onChanged: (val) {
+                          setState(() {
+                            goal.isCompleted = val ?? false;
+                            if (goal.isCompleted) {
+                              goal.completedAt = DateTime.now();
+                            } else {
+                              goal.completedAt = null;
+                            }
+                            HiveService.saveGoal(goal);
+                          });
+                        },
+                        activeColor: const Color(0xFF7B61FF),
+                        checkColor: Colors.white,
+                        side: const BorderSide(color: Colors.white38, width: 1.5),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        goal.text,
+                        style: GoogleFonts.inter(
+                          fontSize: 11,
+                          color: Colors.white,
+                          decoration: goal.isCompleted 
+                              ? TextDecoration.lineThrough 
+                              : null,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            }).toList(),
+        ],
+      ),
     );
   }
 }

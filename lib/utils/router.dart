@@ -141,6 +141,12 @@ final GoRouter appRouter = GoRouter(
           pageBuilder: (context, state) =>
               const NoTransitionPage(child: TabPopScope(child: JournalScreen())),
         ),
+        GoRoute(
+          path: AppRoutes.settings,
+          name: 'settings',
+          pageBuilder: (context, state) =>
+              const NoTransitionPage(child: TabPopScope(child: SettingsScreen())),
+        ),
       ],
     ),
 
@@ -152,13 +158,6 @@ final GoRouter appRouter = GoRouter(
         final entryId = state.pathParameters['entryId']!;
         return JournalDetailScreen(entryId: entryId);
       },
-    ),
-
-    // Settings
-    GoRoute(
-      path: AppRoutes.settings,
-      name: 'settings',
-      builder: (context, state) => const SettingsScreen(),
     ),
 
     // Monthly Summary
