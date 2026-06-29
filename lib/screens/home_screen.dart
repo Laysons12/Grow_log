@@ -396,7 +396,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 barTouchData: BarTouchData(
                   enabled: false, // Omit default touch behaviour to prevent layout shifting
                   touchTooltipData: BarTouchTooltipData(
-                    getTooltipColor: (_) => Colors.transparent,
+                    tooltipBgColor: Colors.transparent,
                     tooltipPadding: EdgeInsets.zero,
                     tooltipMargin: 4,
                     getTooltipItem: (group, groupIndex, rod, rodIndex) {
@@ -660,14 +660,13 @@ class _HomeScreenState extends State<HomeScreen> {
                       child: Checkbox(
                         value: goal.isCompleted,
                         onChanged: (val) {
+                          final isCompleted = val ?? false;
+                          final updatedGoal = goal.copyWith(
+                            status: isCompleted ? 'done' : 'active',
+                            completedAt: isCompleted ? DateTime.now() : null,
+                          );
                           setState(() {
-                            goal.isCompleted = val ?? false;
-                            if (goal.isCompleted) {
-                              goal.completedAt = DateTime.now();
-                            } else {
-                              goal.completedAt = null;
-                            }
-                            HiveService.saveGoal(goal);
+                            HiveService.updateGoal(updatedGoal);
                           });
                         },
                         activeColor: const Color(0xFF7B61FF),
