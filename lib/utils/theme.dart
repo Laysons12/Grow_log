@@ -6,14 +6,24 @@ class AppTheme {
   static bool isDark = true;
 
   // Colors
-  static Color get darkBg => isDark ? const Color(0xFF0F0F0F) : const Color(0xFFF5F6F8);
-  static Color get cardBg => isDark ? const Color(0xFF1A1A1A) : const Color(0xFFFFFFFF);
-  static const Color accentBlue = Color(0xFF4F8EF7);
-  static const Color successGreen = Color(0xFF4CAF50);
-  static const Color warningYellow = Color(0xFFFFC107);
-  static Color get textPrimary => isDark ? const Color(0xFFFFFFFF) : const Color(0xFF1E293B);
-  static Color get textSecondary => isDark ? const Color(0xFFB0B0B0) : const Color(0xFF64748B);
-  static Color get borderColor => isDark ? const Color(0xFF2A2A2A) : const Color(0xFFE2E8F0);
+  static const Color creamBg = Color(0xFFFAF7F0);
+  static const Color deepTeal = Color(0xFF085041);
+  static const Color secondaryTeal = Color(0xFF0F6E56);
+  static const Color lightTeal = Color(0xFFE1F5EE);
+  static const Color midTeal = Color(0xFF5DCAA5);
+  static const Color darkText = Color(0xFF04342C);
+  static const Color mutedText = Color(0xFF7C7567);
+  static const Color cardBorderColor = Color(0xFFD9D2C2);
+  static const Color cardBgColor = Color(0xFFFFFFFF);
+
+  static Color get darkBg => creamBg;
+  static Color get cardBg => cardBgColor;
+  static const Color accentBlue = deepTeal;
+  static const Color successGreen = secondaryTeal;
+  static const Color warningYellow = Color(0xFFD4AF37);
+  static Color get textPrimary => darkText;
+  static Color get textSecondary => mutedText;
+  static Color get borderColor => cardBorderColor;
 
   // Spacing
   static const double spacingXs = 4;
@@ -25,249 +35,149 @@ class AppTheme {
   // Border radius
   static const double radiusSm = 8;
   static const double radiusMd = 12;
-  static const double radiusLg = 16;
-  static const double radiusXl = 24;
+  static const double radiusLg = 12; // 10-12px radius as requested
+  static const double radiusXl = 12;
 
   // Light mode constants for direct use
-  static const Color lightBg = Color(0xFFF5F6F8);
-  static const Color lightCard = Color(0xFFFFFFFF);
-  static const Color lightBorder = Color(0xFFE2E8F0);
-  static const Color lightTextPrimary = Color(0xFF1E293B);
-  static const Color lightTextSecondary = Color(0xFF64748B);
+  static const Color lightBg = creamBg;
+  static const Color lightCard = cardBgColor;
+  static const Color lightBorder = cardBorderColor;
+  static const Color lightTextPrimary = darkText;
+  static const Color lightTextSecondary = mutedText;
 
-  // Get the dark theme
+  // Get the dark theme (styled with Teal/Cream palette)
   static ThemeData darkTheme() {
-    const bg = Color(0xFF0F0F0F);
-    const card = Color(0xFF1A1A1A);
-    const border = Color(0xFF2A2A2A);
-    const txtPrimary = Color(0xFFFFFFFF);
-    const txtSecondary = Color(0xFFB0B0B0);
-
-    return ThemeData(
-      useMaterial3: true,
-      brightness: Brightness.dark,
-      scaffoldBackgroundColor: bg,
-      cardColor: card,
-      dividerColor: border,
-      appBarTheme: AppBarTheme(
-        backgroundColor: card,
-        elevation: 0,
-        centerTitle: false,
-        titleTextStyle: GoogleFonts.inter(
-          fontSize: 20,
-          fontWeight: FontWeight.w600,
-          color: txtPrimary,
-        ),
-      ),
-      textTheme: TextTheme(
-        displayLarge: GoogleFonts.inter(
-          fontSize: 32,
-          fontWeight: FontWeight.bold,
-          color: txtPrimary,
-        ),
-        displayMedium: GoogleFonts.inter(
-          fontSize: 28,
-          fontWeight: FontWeight.bold,
-          color: txtPrimary,
-        ),
-        headlineLarge: GoogleFonts.inter(
-          fontSize: 24,
-          fontWeight: FontWeight.w600,
-          color: txtPrimary,
-        ),
-        headlineMedium: GoogleFonts.inter(
-          fontSize: 20,
-          fontWeight: FontWeight.w600,
-          color: txtPrimary,
-        ),
-        titleLarge: GoogleFonts.inter(
-          fontSize: 18,
-          fontWeight: FontWeight.w600,
-          color: txtPrimary,
-        ),
-        titleMedium: GoogleFonts.inter(
-          fontSize: 16,
-          fontWeight: FontWeight.w500,
-          color: txtPrimary,
-        ),
-        bodyLarge: GoogleFonts.inter(
-          fontSize: 16,
-          fontWeight: FontWeight.w400,
-          color: txtPrimary,
-        ),
-        bodyMedium: GoogleFonts.inter(
-          fontSize: 14,
-          fontWeight: FontWeight.w400,
-          color: txtSecondary,
-        ),
-        labelSmall: GoogleFonts.inter(
-          fontSize: 12,
-          fontWeight: FontWeight.w500,
-          color: txtSecondary,
-        ),
-      ),
-      inputDecorationTheme: InputDecorationTheme(
-        filled: true,
-        fillColor: card,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(radiusLg),
-          borderSide: const BorderSide(color: border),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(radiusLg),
-          borderSide: const BorderSide(color: border),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(radiusLg),
-          borderSide: const BorderSide(color: accentBlue, width: 2),
-        ),
-        hintStyle: GoogleFonts.inter(color: txtSecondary, fontSize: 14),
-      ),
-      elevatedButtonTheme: ElevatedButtonThemeData(
-        style: ElevatedButton.styleFrom(
-          backgroundColor: accentBlue,
-          foregroundColor: Colors.white,
-          padding: const EdgeInsets.symmetric(
-            horizontal: spacingLg,
-            vertical: spacingMd,
-          ),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(radiusLg),
-          ),
-          textStyle: GoogleFonts.inter(
-            fontSize: 16,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-      ),
-      chipTheme: ChipThemeData(
-        backgroundColor: card,
-        selectedColor: accentBlue,
-        labelStyle: const TextStyle(color: txtPrimary),
-        secondaryLabelStyle: const TextStyle(color: Colors.white),
-        side: const BorderSide(color: border),
-      ),
-      colorScheme: const ColorScheme.dark(
-        primary: accentBlue,
-        secondary: successGreen,
-        surface: card,
-        error: Color(0xFFFF6B6B),
-      ),
-    );
+    return _buildTheme();
   }
 
-  // Get the light theme
+  // Get the light theme (styled with Teal/Cream palette)
   static ThemeData lightTheme() {
+    return _buildTheme();
+  }
+
+  static ThemeData _buildTheme() {
     return ThemeData(
       useMaterial3: true,
-      brightness: Brightness.light,
-      scaffoldBackgroundColor: lightBg,
-      cardColor: lightCard,
-      dividerColor: lightBorder,
+      brightness: Brightness.light, // Set light brightness so text defaults correctly
+      scaffoldBackgroundColor: creamBg,
+      cardColor: cardBgColor,
+      dividerColor: cardBorderColor,
       appBarTheme: AppBarTheme(
-        backgroundColor: lightCard,
+        backgroundColor: creamBg,
         elevation: 0,
         centerTitle: false,
-        iconTheme: const IconThemeData(color: lightTextPrimary),
+        iconTheme: const IconThemeData(color: darkText),
         titleTextStyle: GoogleFonts.inter(
           fontSize: 20,
-          fontWeight: FontWeight.w600,
-          color: lightTextPrimary,
+          fontWeight: FontWeight.w500, // medium weight
+          color: darkText,
         ),
       ),
       textTheme: TextTheme(
         displayLarge: GoogleFonts.inter(
           fontSize: 32,
-          fontWeight: FontWeight.bold,
-          color: lightTextPrimary,
+          fontWeight: FontWeight.w500, // medium weight
+          color: darkText,
         ),
         displayMedium: GoogleFonts.inter(
           fontSize: 28,
-          fontWeight: FontWeight.bold,
-          color: lightTextPrimary,
+          fontWeight: FontWeight.w500,
+          color: darkText,
         ),
         headlineLarge: GoogleFonts.inter(
           fontSize: 24,
-          fontWeight: FontWeight.w600,
-          color: lightTextPrimary,
+          fontWeight: FontWeight.w500,
+          color: darkText,
         ),
         headlineMedium: GoogleFonts.inter(
           fontSize: 20,
-          fontWeight: FontWeight.w600,
-          color: lightTextPrimary,
+          fontWeight: FontWeight.w500,
+          color: darkText,
         ),
         titleLarge: GoogleFonts.inter(
           fontSize: 18,
-          fontWeight: FontWeight.w600,
-          color: lightTextPrimary,
+          fontWeight: FontWeight.w500,
+          color: darkText,
         ),
         titleMedium: GoogleFonts.inter(
           fontSize: 16,
           fontWeight: FontWeight.w500,
-          color: lightTextPrimary,
+          color: darkText,
         ),
         bodyLarge: GoogleFonts.inter(
           fontSize: 16,
-          fontWeight: FontWeight.w400,
-          color: lightTextPrimary,
+          fontWeight: FontWeight.w400, // regular weight
+          color: darkText,
         ),
         bodyMedium: GoogleFonts.inter(
           fontSize: 14,
           fontWeight: FontWeight.w400,
-          color: lightTextSecondary,
+          color: mutedText,
         ),
         labelSmall: GoogleFonts.inter(
           fontSize: 12,
           fontWeight: FontWeight.w500,
-          color: lightTextSecondary,
+          color: mutedText,
         ),
       ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: lightCard,
+        fillColor: cardBgColor,
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(radiusLg),
-          borderSide: const BorderSide(color: lightBorder),
+          borderRadius: BorderRadius.circular(radiusMd),
+          borderSide: const BorderSide(color: cardBorderColor),
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(radiusLg),
-          borderSide: const BorderSide(color: lightBorder),
+          borderRadius: BorderRadius.circular(radiusMd),
+          borderSide: const BorderSide(color: cardBorderColor),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(radiusLg),
-          borderSide: const BorderSide(color: accentBlue, width: 2),
+          borderRadius: BorderRadius.circular(radiusMd),
+          borderSide: const BorderSide(color: deepTeal, width: 2),
         ),
-        hintStyle: GoogleFonts.inter(color: lightTextSecondary, fontSize: 14),
+        hintStyle: GoogleFonts.inter(color: mutedText, fontSize: 14),
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          backgroundColor: accentBlue,
+          backgroundColor: deepTeal,
           foregroundColor: Colors.white,
+          elevation: 0,
           padding: const EdgeInsets.symmetric(
             horizontal: spacingLg,
             vertical: spacingMd,
           ),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(radiusLg),
+            borderRadius: BorderRadius.circular(radiusMd),
           ),
           textStyle: GoogleFonts.inter(
             fontSize: 16,
-            fontWeight: FontWeight.w600,
+            fontWeight: FontWeight.w500,
           ),
         ),
       ),
       chipTheme: ChipThemeData(
-        backgroundColor: lightCard,
-        selectedColor: accentBlue.withOpacity(0.15),
-        labelStyle: const TextStyle(color: lightTextPrimary),
-        secondaryLabelStyle: const TextStyle(color: accentBlue),
-        side: const BorderSide(color: lightBorder),
+        backgroundColor: lightTeal,
+        selectedColor: deepTeal,
+        labelStyle: const TextStyle(color: darkText),
+        secondaryLabelStyle: const TextStyle(color: Colors.white),
+        side: const BorderSide(color: cardBorderColor),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(radiusMd),
+        ),
+      ),
+      cardTheme: CardTheme(
+        color: cardBgColor,
+        elevation: 0,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(radiusMd),
+          side: const BorderSide(color: cardBorderColor),
+        ),
       ),
       colorScheme: const ColorScheme.light(
-        primary: accentBlue,
-        secondary: successGreen,
-        surface: lightCard,
-        error: const Color(0xFFFF6B6B),
+        primary: deepTeal,
+        secondary: secondaryTeal,
+        surface: cardBgColor,
+        error: Color(0xFFD32F2F),
       ),
     );
   }
