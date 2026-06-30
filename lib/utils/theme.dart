@@ -6,15 +6,14 @@ class AppTheme {
   static bool isDark = true;
 
   // Colors
-  static Color get darkBg => isDark ? const Color(0xFF13141F) : const Color(0xFFF5F6F8);
-  // Card base
-  static Color get cardBg => isDark ? const Color(0xFF1D1E2C) : const Color(0xFFFFFFFF);
-  static const Color accentBlue = Color(0xFF7B61FF);
+  static Color get darkBg => isDark ? const Color(0xFF0F0F0F) : const Color(0xFFF5F6F8);
+  static Color get cardBg => isDark ? const Color(0xFF1A1A1A) : const Color(0xFFFFFFFF);
+  static const Color accentBlue = Color(0xFF4F8EF7);
   static const Color successGreen = Color(0xFF4CAF50);
   static const Color warningYellow = Color(0xFFFFC107);
   static Color get textPrimary => isDark ? const Color(0xFFFFFFFF) : const Color(0xFF1E293B);
-  static Color get textSecondary => isDark ? const Color(0xFF9E9EAF) : const Color(0xFF64748B);
-  static Color get borderColor => isDark ? const Color(0xFF28293F) : const Color(0xFFE2E8F0);
+  static Color get textSecondary => isDark ? const Color(0xFFB0B0B0) : const Color(0xFF64748B);
+  static Color get borderColor => isDark ? const Color(0xFF2A2A2A) : const Color(0xFFE2E8F0);
 
   // Spacing
   static const double spacingXs = 4;
@@ -38,11 +37,11 @@ class AppTheme {
 
   // Get the dark theme
   static ThemeData darkTheme() {
-    const bg = Color(0xFF13141F);
-    const card = Color(0xFF1D1E2C);
-    const border = Color(0xFF28293F);
+    const bg = Color(0xFF0F0F0F);
+    const card = Color(0xFF1A1A1A);
+    const border = Color(0xFF2A2A2A);
     const txtPrimary = Color(0xFFFFFFFF);
-    const txtSecondary = Color(0xFF9E9EAF);
+    const txtSecondary = Color(0xFFB0B0B0);
 
     return ThemeData(
       useMaterial3: true,
@@ -51,7 +50,7 @@ class AppTheme {
       cardColor: card,
       dividerColor: border,
       appBarTheme: AppBarTheme(
-        backgroundColor: bg,
+        backgroundColor: card,
         elevation: 0,
         centerTitle: false,
         titleTextStyle: GoogleFonts.inter(
