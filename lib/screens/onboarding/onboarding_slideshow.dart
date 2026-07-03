@@ -16,6 +16,7 @@ class _OnboardingSlideshowScreenState extends State<OnboardingSlideshowScreen> {
   final List<_SlideData> _slides = [
     _SlideData(
       emoji: '📈',
+      imagePath: 'assets/images/app_logo.png',
       title: 'Welcome to GrowLog!',
       description:
           'Your personal learning & growth companion.\nTrack your daily progress and build habits that stick.',
@@ -183,7 +184,6 @@ class _OnboardingSlideshowScreenState extends State<OnboardingSlideshowScreen> {
 
   Widget _buildSlide(_SlideData slide) {
     const primaryBg = Color(0xFFFAF7F0);
-    const deepTeal = Color(0xFF085041);
     const lightTeal = Color(0xFFE1F5EE);
     const darkText = Color(0xFF04342C);
     const mutedText = Color(0xFF7C7567);
@@ -198,7 +198,7 @@ class _OnboardingSlideshowScreenState extends State<OnboardingSlideshowScreen> {
             children: [
               const Spacer(flex: 2),
 
-              // Emoji icon with clean light teal container
+              // Emoji icon or logo image with clean light teal container
               Container(
                 width: 140,
                 height: 140,
@@ -206,10 +206,20 @@ class _OnboardingSlideshowScreenState extends State<OnboardingSlideshowScreen> {
                   shape: BoxShape.circle,
                   color: lightTeal,
                 ),
-                child: Center(
-                  child: Text(
-                    slide.emoji,
-                    style: const TextStyle(fontSize: 64),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(70),
+                  child: Center(
+                    child: slide.imagePath != null
+                        ? Image.asset(
+                            slide.imagePath!,
+                            fit: BoxFit.cover,
+                            width: 140,
+                            height: 140,
+                          )
+                        : Text(
+                            slide.emoji,
+                            style: const TextStyle(fontSize: 64),
+                          ),
                   ),
                 ),
               ),
@@ -252,11 +262,13 @@ class _OnboardingSlideshowScreenState extends State<OnboardingSlideshowScreen> {
 
 class _SlideData {
   final String emoji;
+  final String? imagePath;
   final String title;
   final String description;
 
   const _SlideData({
     required this.emoji,
+    this.imagePath,
     required this.title,
     required this.description,
   });
