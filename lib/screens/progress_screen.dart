@@ -199,6 +199,9 @@ class _ProgressScreenState extends State<ProgressScreen> {
       const weekdays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
       chartLabels.add(weekdays[date.weekday - 1]);
     }
+    final double maxVal = chartValues.isEmpty ? 0 : chartValues.reduce((a, b) => a > b ? a : b);
+    final double calculatedMaxY = maxVal < 5 ? 5 : maxVal + 1;
+    final double yInterval = calculatedMaxY > 10 ? (calculatedMaxY / 5).roundToDouble() : 1.0;
 
     final hasData = chartValues.any((v) => v > 0);
 
@@ -224,6 +227,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
             child: hasData
                 ? BarChart(
                     BarChartData(
+                      maxY: calculatedMaxY,
                       barGroups: chartValues
                           .asMap()
                           .entries
@@ -242,6 +246,12 @@ class _ProgressScreenState extends State<ProgressScreen> {
                           .toList(),
                       titlesData: FlTitlesData(
                         show: true,
+                        topTitles: const AxisTitles(
+                          sideTitles: SideTitles(showTitles: false),
+                        ),
+                        rightTitles: const AxisTitles(
+                          sideTitles: SideTitles(showTitles: false),
+                        ),
                         bottomTitles: AxisTitles(
                           sideTitles: SideTitles(
                             showTitles: true,
@@ -260,6 +270,8 @@ class _ProgressScreenState extends State<ProgressScreen> {
                         leftTitles: AxisTitles(
                           sideTitles: SideTitles(
                             showTitles: true,
+                            reservedSize: 28,
+                            interval: yInterval,
                             getTitlesWidget: (value, meta) => Text(
                               '${value.toInt()}',
                               style: Theme.of(context).textTheme.labelSmall,

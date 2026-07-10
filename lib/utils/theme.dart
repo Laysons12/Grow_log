@@ -16,14 +16,15 @@ class AppTheme {
   static const Color cardBorderColor = Color(0xFFD9D2C2);
   static const Color cardBgColor = Color(0xFFFFFFFF);
 
-  static Color get darkBg => creamBg;
-  static Color get cardBg => cardBgColor;
-  static const Color accentBlue = deepTeal;
-  static const Color successGreen = secondaryTeal;
+  static Color get darkBg => isDark ? const Color(0xFF031E19) : creamBg;
+  static Color get cardBg => isDark ? const Color(0xFF063C31) : cardBgColor;
+  static Color get textPrimary => isDark ? creamBg : darkText;
+  static Color get textSecondary => isDark ? const Color(0xFF9FE1CB) : mutedText;
+  static Color get borderColor => isDark ? const Color(0xFF0F6E56) : cardBorderColor;
+
+  static Color get accentBlue => isDark ? const Color(0xFF5DCAA5) : deepTeal;
+  static Color get successGreen => isDark ? const Color(0xFF9FE1CB) : secondaryTeal;
   static const Color warningYellow = Color(0xFFD4AF37);
-  static Color get textPrimary => darkText;
-  static Color get textSecondary => mutedText;
-  static Color get borderColor => cardBorderColor;
 
   // Spacing
   static const double spacingXs = 4;
@@ -47,100 +48,107 @@ class AppTheme {
 
   // Get the dark theme (styled with Teal/Cream palette)
   static ThemeData darkTheme() {
-    return _buildTheme();
+    return _buildTheme(true);
   }
 
   // Get the light theme (styled with Teal/Cream palette)
   static ThemeData lightTheme() {
-    return _buildTheme();
+    return _buildTheme(false);
   }
 
-  static ThemeData _buildTheme() {
+  static ThemeData _buildTheme(bool dark) {
+    final bg = dark ? const Color(0xFF031E19) : creamBg;
+    final card = dark ? const Color(0xFF063C31) : cardBgColor;
+    final border = dark ? const Color(0xFF0F6E56) : cardBorderColor;
+    final txtPrimary = dark ? creamBg : darkText;
+    final txtSecondary = dark ? const Color(0xFF9FE1CB) : mutedText;
+    final primaryAccent = dark ? const Color(0xFF5DCAA5) : deepTeal;
+
     return ThemeData(
       useMaterial3: true,
-      brightness: Brightness.light, // Set light brightness so text defaults correctly
-      scaffoldBackgroundColor: creamBg,
-      cardColor: cardBgColor,
-      dividerColor: cardBorderColor,
+      brightness: dark ? Brightness.dark : Brightness.light,
+      scaffoldBackgroundColor: bg,
+      cardColor: card,
+      dividerColor: border,
       appBarTheme: AppBarTheme(
-        backgroundColor: creamBg,
+        backgroundColor: bg,
         elevation: 0,
         centerTitle: false,
-        iconTheme: const IconThemeData(color: darkText),
+        iconTheme: IconThemeData(color: txtPrimary),
         titleTextStyle: GoogleFonts.inter(
           fontSize: 20,
           fontWeight: FontWeight.w500, // medium weight
-          color: darkText,
+          color: txtPrimary,
         ),
       ),
       textTheme: TextTheme(
         displayLarge: GoogleFonts.inter(
           fontSize: 32,
           fontWeight: FontWeight.w500, // medium weight
-          color: darkText,
+          color: txtPrimary,
         ),
         displayMedium: GoogleFonts.inter(
           fontSize: 28,
           fontWeight: FontWeight.w500,
-          color: darkText,
+          color: txtPrimary,
         ),
         headlineLarge: GoogleFonts.inter(
           fontSize: 24,
           fontWeight: FontWeight.w500,
-          color: darkText,
+          color: txtPrimary,
         ),
         headlineMedium: GoogleFonts.inter(
           fontSize: 20,
           fontWeight: FontWeight.w500,
-          color: darkText,
+          color: txtPrimary,
         ),
         titleLarge: GoogleFonts.inter(
           fontSize: 18,
           fontWeight: FontWeight.w500,
-          color: darkText,
+          color: txtPrimary,
         ),
         titleMedium: GoogleFonts.inter(
           fontSize: 16,
           fontWeight: FontWeight.w500,
-          color: darkText,
+          color: txtPrimary,
         ),
         bodyLarge: GoogleFonts.inter(
           fontSize: 16,
           fontWeight: FontWeight.w400, // regular weight
-          color: darkText,
+          color: txtPrimary,
         ),
         bodyMedium: GoogleFonts.inter(
           fontSize: 14,
           fontWeight: FontWeight.w400,
-          color: mutedText,
+          color: txtSecondary,
         ),
         labelSmall: GoogleFonts.inter(
           fontSize: 12,
           fontWeight: FontWeight.w500,
-          color: mutedText,
+          color: txtSecondary,
         ),
       ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: cardBgColor,
+        fillColor: card,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(radiusMd),
-          borderSide: const BorderSide(color: cardBorderColor),
+          borderSide: BorderSide(color: border),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(radiusMd),
-          borderSide: const BorderSide(color: cardBorderColor),
+          borderSide: BorderSide(color: border),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(radiusMd),
-          borderSide: const BorderSide(color: deepTeal, width: 2),
+          borderSide: BorderSide(color: primaryAccent, width: 2),
         ),
-        hintStyle: GoogleFonts.inter(color: mutedText, fontSize: 14),
+        hintStyle: GoogleFonts.inter(color: txtSecondary, fontSize: 14),
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          backgroundColor: deepTeal,
-          foregroundColor: Colors.white,
+          backgroundColor: primaryAccent,
+          foregroundColor: dark ? const Color(0xFF031E19) : Colors.white,
           elevation: 0,
           padding: const EdgeInsets.symmetric(
             horizontal: spacingLg,
@@ -156,28 +164,30 @@ class AppTheme {
         ),
       ),
       chipTheme: ChipThemeData(
-        backgroundColor: lightTeal,
-        selectedColor: deepTeal,
-        labelStyle: const TextStyle(color: darkText),
-        secondaryLabelStyle: const TextStyle(color: Colors.white),
-        side: const BorderSide(color: cardBorderColor),
+        backgroundColor: dark ? const Color(0xFF085041) : lightTeal,
+        selectedColor: primaryAccent,
+        labelStyle: TextStyle(color: txtPrimary),
+        secondaryLabelStyle: TextStyle(color: dark ? const Color(0xFF031E19) : Colors.white),
+        side: BorderSide(color: border),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(radiusMd),
         ),
       ),
-      cardTheme: CardTheme(
-        color: cardBgColor,
+      cardTheme: CardThemeData(
+        color: card,
         elevation: 0,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(radiusMd),
-          side: const BorderSide(color: cardBorderColor),
+          side: BorderSide(color: border),
         ),
       ),
-      colorScheme: const ColorScheme.light(
-        primary: deepTeal,
+      colorScheme: ColorScheme.fromSeed(
+        seedColor: deepTeal,
+        brightness: dark ? Brightness.dark : Brightness.light,
+        primary: primaryAccent,
         secondary: secondaryTeal,
-        surface: cardBgColor,
-        error: Color(0xFFD32F2F),
+        surface: card,
+        error: const Color(0xFFD32F2F),
       ),
     );
   }
