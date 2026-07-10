@@ -347,7 +347,7 @@ class _MonthlySummaryScreenState extends State<MonthlySummaryScreen> {
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Icon(Icons.check_circle, color: AppTheme.successGreen, size: 20),
+                      Icon(Icons.check_circle, color: AppTheme.successGreen, size: 20),
                       const SizedBox(width: AppTheme.spacingMd),
                       Expanded(
                         child: Text(

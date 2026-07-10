@@ -324,7 +324,7 @@ class _SubjectSelectionScreenState extends State<SubjectSelectionScreen> {
                     children: [
                       Row(
                         children: [
-                          const Icon(
+                          Icon(
                             Icons.access_time,
                             color: AppTheme.accentBlue,
                           ),
@@ -335,7 +335,7 @@ class _SubjectSelectionScreenState extends State<SubjectSelectionScreen> {
                           ),
                         ],
                       ),
-                      const Icon(Icons.edit, color: AppTheme.accentBlue),
+                      Icon(Icons.edit, color: AppTheme.accentBlue),
                     ],
                   ),
                 ),
