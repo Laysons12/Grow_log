@@ -37,7 +37,7 @@ class _GoalsScreenState extends State<GoalsScreen> {
     userProfile = HiveService.getUserProfile()!;
     selectedSkillOrSubject = userProfile.skillsOrSubjects.isNotEmpty
         ? userProfile.skillsOrSubjects.first
-        : '';
+        : 'General';
     _refreshGoals();
   }
 
@@ -147,11 +147,12 @@ class _GoalsScreenState extends State<GoalsScreen> {
 
   Future<void> _pickDate() async {
     final now = DateTime.now();
+    final today = DateUtils.dateOnly(now);
     final date = await showDatePicker(
       context: context,
-      initialDate: selectedDate.isBefore(now) ? now : selectedDate,
-      firstDate: now.subtract(const Duration(days: 365)),
-      lastDate: now.add(const Duration(days: 365 * 10)),
+      initialDate: selectedDate.isBefore(today) ? today : selectedDate,
+      firstDate: today,
+      lastDate: today.add(const Duration(days: 365 * 10)),
     );
     if (date != null) {
       setState(() => selectedDate = date);
@@ -163,10 +164,9 @@ class _GoalsScreenState extends State<GoalsScreen> {
     userProfile = HiveService.getUserProfile()!;
     activeGoals = HiveService.getActiveGoals();
     completedGoals = HiveService.getCompletedGoals();
-    if (!userProfile.skillsOrSubjects.contains(selectedSkillOrSubject)) {
-      selectedSkillOrSubject = userProfile.skillsOrSubjects.isNotEmpty
-          ? userProfile.skillsOrSubjects.first
-          : '';
+    final dropdownItems = [...userProfile.skillsOrSubjects, 'General'];
+    if (!dropdownItems.contains(selectedSkillOrSubject)) {
+      selectedSkillOrSubject = 'General';
     }
 
     return Scaffold(
@@ -279,10 +279,10 @@ class _GoalsScreenState extends State<GoalsScreen> {
                                 child: DropdownButton<String>(
                                   isExpanded: true,
                                   underline: const SizedBox(),
-                                  value: userProfile.skillsOrSubjects.contains(selectedSkillOrSubject)
+                                  value: dropdownItems.contains(selectedSkillOrSubject)
                                       ? selectedSkillOrSubject
-                                      : userProfile.skillsOrSubjects.first,
-                                  items: userProfile.skillsOrSubjects.map((
+                                      : 'General',
+                                  items: dropdownItems.map((
                                     item,
                                   ) {
                                     return DropdownMenuItem(

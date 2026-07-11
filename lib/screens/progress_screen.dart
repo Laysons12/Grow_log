@@ -5,6 +5,7 @@ import '../utils/constants.dart';
 import '../services/hive_service.dart';
 import '../models/user_profile.dart';
 import '../models/streak.dart';
+import '../models/entry.dart';
 
 class ProgressScreen extends StatefulWidget {
   const ProgressScreen({super.key});
@@ -361,16 +362,121 @@ class _ProgressScreenState extends State<ProgressScreen> {
     );
   }
 
+  void _showEntriesDialog(String title, List<Entry> entries) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: AppTheme.cardBg,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) {
+        return Container(
+          padding: const EdgeInsets.all(AppTheme.spacingLg),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                      color: AppTheme.accentBlue,
+                    ),
+              ),
+              const SizedBox(height: AppTheme.spacingMd),
+              Expanded(
+                child: entries.isEmpty
+                    ? const Center(child: Text('No entries found.'))
+                    : ListView.builder(
+                        itemCount: entries.length,
+                        itemBuilder: (context, index) {
+                          final entry = entries[index];
+                          final formattedDate =
+                              '${entry.date.day}/${entry.date.month}/${entry.date.year}';
+                          return Card(
+                            color: AppTheme.darkBg,
+                            margin: const EdgeInsets.only(bottom: AppTheme.spacingMd),
+                            child: Padding(
+                              padding: const EdgeInsets.all(AppTheme.spacingMd),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        entry.subject,
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .titleMedium
+                                            ?.copyWith(
+                                              fontWeight: FontWeight.bold,
+                                              color: AppTheme.textPrimary,
+                                            ),
+                                      ),
+                                      Text(
+                                        formattedDate,
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodySmall
+                                            ?.copyWith(
+                                              color: AppTheme.textSecondary,
+                                            ),
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: AppTheme.spacingSm),
+                                  Text(
+                                    'Hours: ${entry.hoursOrEnergy.toStringAsFixed(1)} hrs',
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .bodyMedium
+                                        ?.copyWith(
+                                          color: AppTheme.textSecondary,
+                                        ),
+                                  ),
+                                  const SizedBox(height: AppTheme.spacingSm),
+                                  Text(
+                                    entry.learned,
+                                    style: Theme.of(context).textTheme.bodyMedium,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   Widget _buildStatsRow() {
     return Row(
       children: [
-        Expanded(child: _buildStatCard('📝', 'Total Entries', '$totalEntries')),
+        Expanded(
+          child: GestureDetector(
+            onTap: () {
+              final entries = HiveService.getAllEntries();
+              _showEntriesDialog('Total Entries Log', entries);
+            },
+            child: _buildStatCard('📝', 'Total Entries', '$totalEntries'),
+          ),
+        ),
         const SizedBox(width: AppTheme.spacingMd),
         Expanded(
-          child: _buildStatCard(
-            '📅',
-            'This Week',
-            '${HiveService.getEntriesLastNDays(7).length}',
+          child: GestureDetector(
+            onTap: () {
+              final entries = HiveService.getEntriesLastNDays(7);
+              _showEntriesDialog("This Week's Entries Log", entries);
+            },
+            child: _buildStatCard(
+              '📅',
+              'This Week',
+              '${HiveService.getEntriesLastNDays(7).length}',
+            ),
           ),
         ),
       ],

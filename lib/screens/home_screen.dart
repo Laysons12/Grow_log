@@ -234,17 +234,20 @@ class _HomeScreenState extends State<HomeScreen> {
         .toList();
 
     if (todayGoals.isEmpty) {
-      return Container(
-        padding: const EdgeInsets.all(AppTheme.spacingLg),
-        decoration: BoxDecoration(
-          color: AppTheme.cardBg,
-          border: Border.all(color: AppTheme.borderColor),
-          borderRadius: BorderRadius.circular(AppTheme.radiusLg),
-        ),
-        child: Center(
-          child: Text(
-            'No goals for today. Add one! 🎯',
-            style: Theme.of(context).textTheme.bodyMedium,
+      return GestureDetector(
+        onTap: () => context.goNamed('goals'),
+        child: Container(
+          padding: const EdgeInsets.all(AppTheme.spacingLg),
+          decoration: BoxDecoration(
+            color: AppTheme.cardBg,
+            border: Border.all(color: AppTheme.borderColor),
+            borderRadius: BorderRadius.circular(AppTheme.radiusLg),
+          ),
+          child: Center(
+            child: Text(
+              'No goals for today. Add one! 🎯',
+              style: Theme.of(context).textTheme.bodyMedium,
+            ),
           ),
         ),
       );
