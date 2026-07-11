@@ -20,30 +20,35 @@ class _OnboardingSlideshowScreenState extends State<OnboardingSlideshowScreen> {
       title: 'Welcome to GrowLog!',
       description:
           'Your personal learning & growth companion.\nTrack your daily progress and build habits that stick.',
+      gradient: [Color(0xFF667eea), Color(0xFF764ba2)],
     ),
     _SlideData(
       emoji: '✏️',
       title: 'Daily Check-ins',
       description:
           'Log what you learn every day with quick study or work check-ins.\nCapture study hours, mood, and reflections in seconds.',
+      gradient: [Color(0xFF11998e), Color(0xFF38ef7d)],
     ),
     _SlideData(
       emoji: '🎯',
       title: 'Goals & Streaks',
       description:
           'Set learning goals and build streaks to stay consistent.\nWatch your streak grow as you check in daily!',
+      gradient: [Color(0xFFf093fb), Color(0xFFf5576c)],
     ),
     _SlideData(
       emoji: '📊',
       title: 'Progress Tracking',
       description:
           'Visualize your growth with charts, weekly reviews,\nand monthly summaries. See how far you\'ve come!',
+      gradient: [Color(0xFF4facfe), Color(0xFF00f2fe)],
     ),
     _SlideData(
       emoji: '👨‍👧',
       title: 'Multi-Profile Support',
       description:
           'Switch between Student & Professional modes.\nShare the device with family — each profile keeps its own data!',
+      gradient: [Color(0xFFfa709a), Color(0xFFfee140)],
     ),
   ];
 
@@ -73,12 +78,7 @@ class _OnboardingSlideshowScreenState extends State<OnboardingSlideshowScreen> {
 
   @override
   Widget build(BuildContext context) {
-    const primaryBg = Color(0xFFFAF7F0);
-    const deepTeal = Color(0xFF085041);
-    const mutedText = Color(0xFF7C7567);
-
     return Scaffold(
-      backgroundColor: primaryBg,
       body: Stack(
         children: [
           // Page View
@@ -107,7 +107,7 @@ class _OnboardingSlideshowScreenState extends State<OnboardingSlideshowScreen> {
                     ? _finishOnboarding
                     : null,
                 style: TextButton.styleFrom(
-                  foregroundColor: deepTeal,
+                  foregroundColor: Colors.white70,
                   padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 ),
                 child: const Text(
@@ -137,8 +137,8 @@ class _OnboardingSlideshowScreenState extends State<OnboardingSlideshowScreen> {
                       height: 10,
                       decoration: BoxDecoration(
                         color: _currentPage == index
-                            ? deepTeal
-                            : deepTeal.withOpacity(0.2),
+                            ? Colors.white
+                            : Colors.white38,
                         borderRadius: BorderRadius.circular(5),
                       ),
                     ),
@@ -155,9 +155,10 @@ class _OnboardingSlideshowScreenState extends State<OnboardingSlideshowScreen> {
                     child: ElevatedButton(
                       onPressed: _nextPage,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: deepTeal,
-                        foregroundColor: Colors.white,
-                        elevation: 0,
+                        backgroundColor: Colors.white,
+                        foregroundColor: _slides[_currentPage].gradient[0],
+                        elevation: 4,
+                        shadowColor: Colors.black26,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
@@ -183,13 +184,14 @@ class _OnboardingSlideshowScreenState extends State<OnboardingSlideshowScreen> {
   }
 
   Widget _buildSlide(_SlideData slide) {
-    const primaryBg = Color(0xFFFAF7F0);
-    const lightTeal = Color(0xFFE1F5EE);
-    const darkText = Color(0xFF04342C);
-    const mutedText = Color(0xFF7C7567);
-
     return Container(
-      color: primaryBg,
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: slide.gradient,
+        ),
+      ),
       child: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 32),
@@ -198,13 +200,13 @@ class _OnboardingSlideshowScreenState extends State<OnboardingSlideshowScreen> {
             children: [
               const Spacer(flex: 2),
 
-              // Emoji icon or logo image with clean light teal container
+              // Emoji icon or logo image with clean light container
               Container(
                 width: 140,
                 height: 140,
-                decoration: const BoxDecoration(
+                decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: lightTeal,
+                  color: Colors.white.withOpacity(0.15),
                 ),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(70),
@@ -231,8 +233,8 @@ class _OnboardingSlideshowScreenState extends State<OnboardingSlideshowScreen> {
                 textAlign: TextAlign.center,
                 style: const TextStyle(
                   fontSize: 28,
-                  fontWeight: FontWeight.w500, // medium weight
-                  color: darkText,
+                  fontWeight: FontWeight.w600,
+                  color: Colors.white,
                   letterSpacing: -0.5,
                   height: 1.2,
                 ),
@@ -243,9 +245,9 @@ class _OnboardingSlideshowScreenState extends State<OnboardingSlideshowScreen> {
               Text(
                 slide.description,
                 textAlign: TextAlign.center,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 16,
-                  color: mutedText,
+                  color: Colors.white.withOpacity(0.85),
                   height: 1.6,
                   letterSpacing: 0.2,
                 ),
@@ -265,11 +267,13 @@ class _SlideData {
   final String? imagePath;
   final String title;
   final String description;
+  final List<Color> gradient;
 
   const _SlideData({
     required this.emoji,
     this.imagePath,
     required this.title,
     required this.description,
+    required this.gradient,
   });
 }
