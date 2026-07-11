@@ -172,10 +172,15 @@ class AppValidators {
     return null;
   }
 
-  // 9. Notes Validator (doubts, win, improve)
+  // 9. Notes Validator (doubts, win, improve, learned)
   static String? validateNotes(String? value, {String fieldName = 'Notes'}) {
-    if (value != null && value.length > 500) {
+    if (value == null) return null;
+    if (value.length > 500) {
       return '$fieldName must be 500 characters or less';
+    }
+    final digitCount = value.replaceAll(RegExp(r"[^0-9]"), "").length;
+    if (digitCount > 20) {
+      return '$fieldName can have at most 20 numbers';
     }
     return null;
   }
@@ -185,8 +190,8 @@ class AppValidators {
     if (value == null || value.trim().isEmpty) return null;
     final trimmed = value.trim();
     final digitCount = trimmed.replaceAll(RegExp(r"[^0-9]"), "").length;
-    if (digitCount > 5) {
-      return 'Win of the day can have at most 5 numbers';
+    if (digitCount > 20) {
+      return 'Win of the day can have at most 20 numbers';
     }
     final letterCount = trimmed.replaceAll(RegExp(r"[^a-zA-Z]"), "").length;
     if (letterCount > 200) {
@@ -200,8 +205,8 @@ class AppValidators {
     if (value == null || value.trim().isEmpty) return null;
     final trimmed = value.trim();
     final digitCount = trimmed.replaceAll(RegExp(r"[^0-9]"), "").length;
-    if (digitCount > 15) {
-      return 'What to improve can have at most 15 numbers';
+    if (digitCount > 20) {
+      return 'What to improve can have at most 20 numbers';
     }
     return null;
   }

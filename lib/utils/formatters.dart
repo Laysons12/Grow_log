@@ -34,7 +34,8 @@ class RoleOrClassFormatter extends TextInputFormatter {
 
 class MaxDigitsFormatter extends TextInputFormatter {
   final int maxDigits;
-  MaxDigitsFormatter(this.maxDigits);
+  final Function()? onLimitExceeded;
+  MaxDigitsFormatter(this.maxDigits, {this.onLimitExceeded});
 
   @override
   TextEditingValue formatEditUpdate(
@@ -43,6 +44,9 @@ class MaxDigitsFormatter extends TextInputFormatter {
   ) {
     final digitCount = newValue.text.replaceAll(RegExp(r'[^0-9]'), '').length;
     if (digitCount > maxDigits) {
+      if (onLimitExceeded != null) {
+        onLimitExceeded!();
+      }
       return oldValue;
     }
     return newValue;

@@ -351,6 +351,9 @@ class _CheckInScreenState extends State<CheckInScreen> {
                   : 'Share what you learned...',
               controller: _learnedController,
               maxLines: 3,
+              inputFormatters: [
+                MaxDigitsFormatter(20, onLimitExceeded: () => _showToast('Only 20 numbers can be entered'))
+              ],
             ),
             const SizedBox(height: AppTheme.spacingLg),
 
@@ -378,6 +381,9 @@ class _CheckInScreenState extends State<CheckInScreen> {
               hint: 'What went well today?',
               controller: _winController,
               maxLines: 2,
+              inputFormatters: [
+                MaxDigitsFormatter(20, onLimitExceeded: () => _showToast('Only 20 numbers can be entered'))
+              ],
             ),
             const SizedBox(height: AppTheme.spacingLg),
 
@@ -387,6 +393,9 @@ class _CheckInScreenState extends State<CheckInScreen> {
               hint: 'Any areas for improvement?',
               controller: _improveController,
               maxLines: 2,
+              inputFormatters: [
+                MaxDigitsFormatter(20, onLimitExceeded: () => _showToast('Only 20 numbers can be entered'))
+              ],
             ),
             const SizedBox(height: AppTheme.spacingLg),
 
@@ -397,6 +406,9 @@ class _CheckInScreenState extends State<CheckInScreen> {
                 hint: 'Any concepts or doubts?',
                 controller: _doubtsController,
                 maxLines: 2,
+                inputFormatters: [
+                  MaxDigitsFormatter(20, onLimitExceeded: () => _showToast('Only 20 numbers can be entered'))
+                ],
               ),
             if (isStudent) const SizedBox(height: AppTheme.spacingLg),
 
@@ -462,6 +474,7 @@ class _CheckInScreenState extends State<CheckInScreen> {
     required String hint,
     required TextEditingController controller,
     int maxLines = 1,
+    List<TextInputFormatter>? inputFormatters,
   }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -471,6 +484,7 @@ class _CheckInScreenState extends State<CheckInScreen> {
         TextField(
           controller: controller,
           maxLines: maxLines,
+          inputFormatters: inputFormatters,
           decoration: InputDecoration(hintText: hint),
         ),
       ],

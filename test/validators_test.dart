@@ -80,12 +80,13 @@ void main() {
     test('validateNotes validations', () {
       expect(AppValidators.validateNotes('a' * 501, fieldName: 'Doubts'), 'Doubts must be 500 characters or less');
       expect(AppValidators.validateNotes('a' * 500), isNull);
+      expect(AppValidators.validateNotes('1' * 21, fieldName: 'Learned'), 'Learned can have at most 20 numbers');
     });
 
     test('validateWin validations', () {
       expect(AppValidators.validateWin(null), isNull);
       expect(AppValidators.validateWin(''), isNull);
-      expect(AppValidators.validateWin('123456'), 'Win of the day can have at most 5 numbers');
+      expect(AppValidators.validateWin('1' * 21), 'Win of the day can have at most 20 numbers');
       expect(AppValidators.validateWin('a' * 201), 'Win of the day can have at most 200 letters');
       expect(AppValidators.validateWin('My Win 12345'), isNull);
     });
@@ -93,7 +94,7 @@ void main() {
     test('validateImprove validations', () {
       expect(AppValidators.validateImprove(null), isNull);
       expect(AppValidators.validateImprove(''), isNull);
-      expect(AppValidators.validateImprove('1' * 16), 'What to improve can have at most 15 numbers');
+      expect(AppValidators.validateImprove('1' * 21), 'What to improve can have at most 20 numbers');
       expect(AppValidators.validateImprove('a' * 600), isNull); // unlimited letters
     });
 
