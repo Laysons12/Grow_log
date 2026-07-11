@@ -404,7 +404,7 @@ class _ProgressScreenState extends State<ProgressScreen> {
                                         MainAxisAlignment.spaceBetween,
                                     children: [
                                       Text(
-                                        entry.subject,
+                                        entry.subjectOrSkill,
                                         style: Theme.of(context)
                                             .textTheme
                                             .titleMedium
