@@ -70,7 +70,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 )
               : Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     // Greeting card
                     _buildGreetingCard(),
@@ -101,7 +101,8 @@ class _HomeScreenState extends State<HomeScreen> {
     return Container(
       padding: const EdgeInsets.all(AppTheme.spacingLg),
       decoration: BoxDecoration(
-        color: AppTheme.accentBlue,
+        color: AppTheme.cardBg,
+        border: Border.all(color: AppTheme.borderColor),
         borderRadius: BorderRadius.circular(AppTheme.radiusLg),
       ),
       child: Column(
@@ -111,14 +112,14 @@ class _HomeScreenState extends State<HomeScreen> {
             '${AppHelpers.getGreeting()}, ${userProfile?.name}! 👋',
             style: Theme.of(
               context,
-            ).textTheme.titleLarge?.copyWith(color: Colors.white),
+            ).textTheme.titleLarge?.copyWith(color: AppTheme.textPrimary),
           ),
           const SizedBox(height: AppTheme.spacingSm),
           Text(
             'Ready to grow today?',
             style: Theme.of(
               context,
-            ).textTheme.bodyMedium?.copyWith(color: Colors.white70),
+            ).textTheme.bodyMedium?.copyWith(color: AppTheme.textSecondary),
           ),
         ],
       ),
@@ -139,9 +140,9 @@ class _HomeScreenState extends State<HomeScreen> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          _buildStreakItem('🔥 Current', '$streak', 'days'),
+          Expanded(child: _buildStreakItem('🔥 Current', '$streak', 'days')),
           Container(width: 1, height: 60, color: AppTheme.borderColor),
-          _buildStreakItem('👑 Longest', '$longestStreak', 'days'),
+          Expanded(child: _buildStreakItem('👑 Longest', '$longestStreak', 'days')),
         ],
       ),
     );
@@ -149,16 +150,17 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _buildStreakItem(String label, String value, String unit) {
     return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Text(label, style: Theme.of(context).textTheme.bodySmall),
+        Text(label, style: Theme.of(context).textTheme.bodySmall?.copyWith(color: AppTheme.textSecondary)),
         const SizedBox(height: AppTheme.spacingSm),
         Text(
           value,
           style: Theme.of(
             context,
-          ).textTheme.headlineMedium?.copyWith(color: AppTheme.successGreen),
+          ).textTheme.headlineMedium?.copyWith(color: AppTheme.textPrimary, fontWeight: FontWeight.bold),
         ),
-        Text(unit, style: Theme.of(context).textTheme.bodySmall),
+        Text(unit, style: Theme.of(context).textTheme.bodySmall?.copyWith(color: AppTheme.textSecondary)),
       ],
     );
   }
@@ -178,46 +180,44 @@ class _HomeScreenState extends State<HomeScreen> {
       child: Container(
         padding: const EdgeInsets.all(AppTheme.spacingLg),
         decoration: BoxDecoration(
-          color: allDone
-              ? AppTheme.successGreen.withOpacity(0.1)
-              : AppTheme.accentBlue,
+          color: AppTheme.cardBg,
           border: Border.all(
-            color: allDone ? AppTheme.successGreen : AppTheme.accentBlue,
+            color: allDone ? AppTheme.successGreen : AppTheme.borderColor,
           ),
           borderRadius: BorderRadius.circular(AppTheme.radiusLg),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  allDone
-                      ? 'All subjects done! ✅'
-                      : checkedInCount > 0
-                          ? 'Continue checking in'
-                          : 'Check in for today',
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    color: allDone ? AppTheme.textPrimary : Colors.white,
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    allDone
+                        ? 'All subjects done! ✅'
+                        : checkedInCount > 0
+                            ? 'Continue checking in'
+                            : 'Check in for today',
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      color: AppTheme.textPrimary,
+                    ),
                   ),
-                ),
-                const SizedBox(height: AppTheme.spacingSm),
-                Text(
-                  allDone
-                      ? 'Tap to update any entry'
-                      : '$checkedInCount/$totalSubjects subjects checked in today',
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    color: allDone
-                        ? AppTheme.textSecondary
-                        : Colors.white70,
+                  const SizedBox(height: AppTheme.spacingSm),
+                  Text(
+                    allDone
+                        ? 'Tap to update any entry'
+                        : '$checkedInCount/$totalSubjects subjects checked in today',
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: AppTheme.textSecondary,
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
             Icon(
               Icons.arrow_forward,
-              color: allDone ? AppTheme.successGreen : Colors.white,
+              color: AppTheme.textPrimary,
             ),
           ],
         ),

@@ -16,14 +16,14 @@ class AppTheme {
   static const Color cardBorderColor = Color(0xFFD9D2C2);
   static const Color cardBgColor = Color(0xFFFFFFFF);
 
-  static Color get darkBg => isDark ? const Color(0xFF031E19) : creamBg;
-  static Color get cardBg => isDark ? const Color(0xFF063C31) : cardBgColor;
-  static Color get textPrimary => isDark ? creamBg : darkText;
-  static Color get textSecondary => isDark ? const Color(0xFF9FE1CB) : mutedText;
-  static Color get borderColor => isDark ? const Color(0xFF0F6E56) : cardBorderColor;
+  static Color get darkBg => isDark ? const Color(0xFF000000) : creamBg;
+  static Color get cardBg => isDark ? const Color(0xFF1C1C1E) : cardBgColor;
+  static Color get textPrimary => isDark ? Colors.white : darkText;
+  static Color get textSecondary => isDark ? const Color(0xFF8E8E93) : mutedText;
+  static Color get borderColor => isDark ? const Color(0xFF2C2C2E) : cardBorderColor;
 
-  static Color get accentBlue => isDark ? const Color(0xFF5DCAA5) : deepTeal;
-  static Color get successGreen => isDark ? const Color(0xFF9FE1CB) : secondaryTeal;
+  static Color get accentBlue => isDark ? Colors.white : deepTeal;
+  static Color get successGreen => isDark ? const Color(0xFFE5E5EA) : secondaryTeal;
   static const Color warningYellow = Color(0xFFD4AF37);
 
   // Spacing
@@ -57,12 +57,12 @@ class AppTheme {
   }
 
   static ThemeData _buildTheme(bool dark) {
-    final bg = dark ? const Color(0xFF031E19) : creamBg;
-    final card = dark ? const Color(0xFF063C31) : cardBgColor;
-    final border = dark ? const Color(0xFF0F6E56) : cardBorderColor;
-    final txtPrimary = dark ? creamBg : darkText;
-    final txtSecondary = dark ? const Color(0xFF9FE1CB) : mutedText;
-    final primaryAccent = dark ? const Color(0xFF5DCAA5) : deepTeal;
+    final bg = dark ? const Color(0xFF000000) : creamBg;
+    final card = dark ? const Color(0xFF1C1C1E) : cardBgColor;
+    final border = dark ? const Color(0xFF2C2C2E) : cardBorderColor;
+    final txtPrimary = dark ? Colors.white : darkText;
+    final txtSecondary = dark ? const Color(0xFF8E8E93) : mutedText;
+    final primaryAccent = dark ? Colors.white : deepTeal;
 
     return ThemeData(
       useMaterial3: true,
@@ -148,7 +148,7 @@ class AppTheme {
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           backgroundColor: primaryAccent,
-          foregroundColor: dark ? const Color(0xFF031E19) : Colors.white,
+          foregroundColor: dark ? Colors.black : Colors.white,
           elevation: 0,
           padding: const EdgeInsets.symmetric(
             horizontal: spacingLg,
@@ -164,10 +164,10 @@ class AppTheme {
         ),
       ),
       chipTheme: ChipThemeData(
-        backgroundColor: dark ? const Color(0xFF085041) : lightTeal,
+        backgroundColor: dark ? const Color(0xFF2C2C2E) : lightTeal,
         selectedColor: primaryAccent,
         labelStyle: TextStyle(color: txtPrimary),
-        secondaryLabelStyle: TextStyle(color: dark ? const Color(0xFF031E19) : Colors.white),
+        secondaryLabelStyle: TextStyle(color: dark ? Colors.black : Colors.white),
         side: BorderSide(color: border),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(radiusMd),
