@@ -722,10 +722,18 @@ class _CheckInScreenState extends State<CheckInScreen> {
                 children: [
                   Text(AppHelpers.getMoodEmoji(mood)),
                   const SizedBox(width: AppTheme.spacingSm),
-                  Text(mood),
+                  Text(
+                    mood,
+                    style: TextStyle(
+                      color: isSelected
+                          ? (AppTheme.isDark ? Colors.black : Colors.white)
+                          : AppTheme.textPrimary,
+                    ),
+                  ),
                 ],
               ),
               selected: isSelected,
+              checkmarkColor: AppTheme.isDark ? Colors.black : Colors.white,
               onSelected: (selected) {
                 setState(() => selectedMood = mood.toLowerCase());
               },

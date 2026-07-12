@@ -255,7 +255,7 @@ class _SubjectSelectionScreenState extends State<SubjectSelectionScreen> {
                         item,
                         style: Theme.of(context).textTheme.labelSmall?.copyWith(
                           color: isSelected
-                              ? Colors.white
+                              ? (AppTheme.isDark ? Colors.black : Colors.white)
                               : AppTheme.textPrimary,
                         ),
                       ),
